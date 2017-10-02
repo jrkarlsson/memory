@@ -22,7 +22,11 @@ export default class CardHTMLPresentation implements CardPresentationInterface {
     return element;
   }
 
-  flip() {
+  flip(): boolean {
+    if(this.model.disabled) {
+      return false;
+    }
+    
     this.model.flip();
     
     if(this.model.flipped) {
@@ -31,5 +35,11 @@ export default class CardHTMLPresentation implements CardPresentationInterface {
     else {
       this.element.className = styles.card +' '+styles.facedown;
     }
+
+    return true;
+  }
+
+  reset(): void {
+    this.element.className = styles.card +' '+styles.facedown;
   }
 }

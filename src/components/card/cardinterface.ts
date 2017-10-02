@@ -5,6 +5,12 @@ export default interface CardInterface {
   presentation: CardPresentation;
   symbol: string;
   flipped: boolean;
+  disabled: boolean;
+  observers: Array<any>
   flip(): boolean;
   match(card): boolean;
+  toggleDisabled(): boolean;
+  subscribe(observer): void;
+  unsubscribe(observer): void;
+  notify(subject): void;
 }

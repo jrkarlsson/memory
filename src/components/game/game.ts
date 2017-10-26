@@ -10,6 +10,8 @@ export default class Game {
   symbols: Array<string>;
   presentation: Board; 
   flipped: Array<Card> = [];
+  moves: number = 0;
+  readonly cardFlipTimeout: number = 150;
 
   constructor(pairs) {
     this.noPairs = pairs;
@@ -38,7 +40,7 @@ export default class Game {
   }
 
   toggleDisabled(): void {
-    this.cards.map((card) => {
+    this.cards.forEach(card => {
       card.toggleDisabled();
     });
   }
@@ -49,10 +51,26 @@ export default class Game {
     });
   }
 
-  resetCards(): void {
-    this.cards.map((card) => {
-      card.reset();
+  /**
+   * Cascade flip all the cards at the end of the game.
+   * 
+   * @memberof Game
+   */
+  flipAllCards(): void {
+    let timer = 0;
+    this.cards.forEach(card => {
+      setTimeout(() => {
+        card.reset();
+      }, timer);
+
+      timer += this.cardFlipTimeout;
     });
+  }
+
+  resetCards(): void {
+    this.cards.forEach(card => {
+      card.reset();
+    })
   }
 
   /**
@@ -62,17 +80,30 @@ export default class Game {
    * @memberof Game
    */
   reset(init: boolean = false): void {
-    let timeout = init ? 0 : 2000;
-
+    //Calculate the timeout, either immediately or number of cards * timeout + margin
+    let timeout = init ? 0 : this.cards.length * this.cardFlipTimeout + this.cardFlipTimeout;
+    
+    if(!init) {
+      this.flipAllCards();
+      // this.resetCards();
+    }
     setTimeout(() => {
-      if(!init) {
-        this.resetCards();
-      }
-
+      this.moves = 0;
       this.cards = this.generateCards(this.noPairs);
       this.presentation = new BoardHtmlPresentation(this.cards);
       this.presentation.render();
     }, timeout)
+  }
+
+  /**
+   * Alert user with number of moves they used to complete the game.
+   * Note: To prevent the script pausing execution it should probably 
+   * be a proper modal. setTimeout didn't work.
+   * 
+   * @memberof Game
+   */
+  alertUser() {
+      alert(`Congratulations, you solved it in ${this.moves} moves!`);
   }
 
   /**
@@ -83,16 +114,22 @@ export default class Game {
    */
   update(card: Card): void {
     this.flipped.push(card);
-    
+
+    // If all cards are flipped/matched, end game and reset.
     if(this.allIsFlipped()) {
       this.toggleDisabled();
+      this.alertUser();
       this.reset();
     }
 
+    // If two cards are flipped, check if they match
     if(this.flipped.length === 2) {
+      this.moves = this.moves + 1;
       this.toggleDisabled();
       
       if(this.flipped[0].match(this.flipped[1])) {
+        this.flipped[0].toggleDisabled();
+        this.flipped[1].toggleDisabled();
         this.flipped = [];
         this.toggleDisabled();
       }

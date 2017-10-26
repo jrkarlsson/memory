@@ -12,14 +12,24 @@ export default class CardHTMLPresentation implements CardPresentationInterface {
   }
 
   buildElement(): HTMLDivElement {
-    let element = document.createElement('div');
-    element.id = this.model.id;
-    element.className = styles.card +' '+styles.facedown;
-    element.innerHTML = '<i class="fa fa-'+ this.model.symbol +'"/>';
-    
-    element.addEventListener('click', this.flip.bind(this));
+    let container = document.createElement('div'),
+        flipper = document.createElement('div'),
+        front = document.createElement('div'),
+        back = document.createElement('div');
 
-    return element;
+    container.className = styles.card;
+    flipper.className = styles.flipper;
+    front.className = styles.front;
+    front.innerHTML = '<i class="fa fa-'+ this.model.symbol +'"/>';
+    back.className = styles.back;
+
+    flipper.appendChild(front);
+    flipper.appendChild(back);
+    container.appendChild(flipper);
+    
+    container.addEventListener('click', this.flip.bind(this));
+
+    return container;
   }
 
   flip(): boolean {
@@ -27,19 +37,19 @@ export default class CardHTMLPresentation implements CardPresentationInterface {
       return false;
     }
     
-    this.model.flip();
-    
-    if(this.model.flipped) {
-      this.element.className = styles.card +' '+styles.faceup;
+    if(!this.model.flipped) {
+      this.element.className = styles.card +' '+ styles.flipped;
     }
     else {
-      this.element.className = styles.card +' '+styles.facedown;
+      this.element.className = styles.card;
     }
 
+    this.model.flip();
+    
     return true;
   }
 
   reset(): void {
-    this.element.className = styles.card +' '+styles.facedown;
+    this.element.className = styles.card;
   }
 }

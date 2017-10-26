@@ -14,10 +14,10 @@ export default class BoardHTMLPresentation implements BoardPresentationInterface
     element.id = 'game-board';
     element.className = styles.content;
 
-    for(let i = 0; i < cards.length; i++) {
-      element.appendChild(cards[i].presentation.element);
-    }
-    
+    cards.forEach(card => {
+      element.appendChild(card.presentation.element);
+    });
+
     return element;
   }
 

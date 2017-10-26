@@ -28,7 +28,7 @@ module.exports = {
                     modules: true,
                     namedExport: true,
                     camelCase: true,
-                    sourceMap: false
+                    sourceMap: true
                 }
             },
             {

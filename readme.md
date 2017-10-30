@@ -10,7 +10,9 @@ Node
 
 Run the following commands...
 
+```
 npm install
+```
 ```
 npm run start
 ```
@@ -25,7 +27,7 @@ npm run start
 
 ## Authors
 
-* **Robert karlsson** - *All the work* - [jrkarlsson](https://github.com/jrkarlsson)
+* **Robert karlsson** - [jrkarlsson](https://github.com/jrkarlsson)
 
 ## License
 
